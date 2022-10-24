@@ -1,0 +1,494 @@
+zabbix_export:
+  version: '6.2'
+  date: '2022-10-24T07:59:40Z'
+  template_groups:
+    -
+      uuid: 7df96b18c230490a9a0a9e2307226338
+      name: Templates
+  templates:
+    -
+      uuid: 1f6e9da1450f446ba7126bcdf394423a
+      template: Pi-Hole
+      name: Pi-Hole
+      description: '© Wieger Bontekoe - https://bontekoe.technology'
+      groups:
+        -
+          name: Templates
+      items:
+        -
+          uuid: 9342609d6add473ea6fb316e17af2eab
+          name: 'Pi-Hole - DNS Query''s Blocked Today'
+          type: DEPENDENT
+          key: ads_blocked_today
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.ads_blocked_today
+            -
+              type: JAVASCRIPT
+              parameters:
+                - |
+                  value = value.replace(",", "");  
+                  return parseInt(value);
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+        -
+          uuid: fc34df6bb3464d22812bb0bce53938a7
+          name: 'Pi-Hole - Blocks Percentage Today'
+          type: DEPENDENT
+          key: ads_percentage_today
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.ads_percentage_today
+            -
+              type: JAVASCRIPT
+              parameters:
+                - 'return parseInt(value);'
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+        -
+          uuid: e4e0a7a4b42f4dd4a0b999b46f0e6277
+          name: 'Pi-Hole - DNS Query''s Today'
+          type: DEPENDENT
+          key: dns_queries_today
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.dns_queries_today
+            -
+              type: JAVASCRIPT
+              parameters:
+                - |
+                  value = value.replace(",", "");  
+                  return parseInt(value);
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+        -
+          uuid: 396066048ed2448aa480dbb09e6c3526
+          name: 'Pi-Hole - Blocked Domains'
+          type: DEPENDENT
+          key: domains_being_blocked
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.domains_being_blocked
+            -
+              type: JAVASCRIPT
+              parameters:
+                - |
+                  value = value.replace(",", "");
+                  value = value.replace(",", "");
+                  return parseInt(value);
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+        -
+          uuid: 74e88436315e47908657a2b7bbf7092f
+          name: 'Pi-Hole - Gravity - Last Update'
+          type: DEPENDENT
+          key: gravity_last_updated.absolute
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.gravity_last_updated.absolute
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+          triggers:
+            -
+              uuid: 13660b5f602c4832a6de3d1d5b026271
+              expression: 'fuzzytime(/Pi-Hole/gravity_last_updated.absolute,84600)=1'
+              name: 'Pi-hole no update for 24 hours'
+              priority: AVERAGE
+              manual_close: 'YES'
+        -
+          uuid: 39156fac04994c11a3309db41532b876
+          name: 'Pi-Hole - Gravity - File Exists'
+          type: DEPENDENT
+          key: gravity_last_updated.file_exists
+          delay: '0'
+          trends: '0'
+          value_type: TEXT
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.gravity_last_updated.file_exists
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+        -
+          uuid: a2fde08f69fc44628bac4395e6e86534
+          name: 'Pi-hole - REST - Summary Information'
+          type: HTTP_AGENT
+          key: pi-hole.sum
+          delay: 30s
+          history: '0'
+          trends: '0'
+          value_type: TEXT
+          url: 'http://{HOST.HOST}:{$PORT}/admin/api.php?summary'
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+        -
+          uuid: 843c848a6afd4ffd8d03be3475234dc9
+          name: 'Pi-Hole - DNS Query''s Cached'
+          type: DEPENDENT
+          key: queries_cached
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.queries_cached
+            -
+              type: JAVASCRIPT
+              parameters:
+                - |
+                  value = value.replace(",", "");  
+                  return parseInt(value);
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+        -
+          uuid: 1abecec4e8d54fe3aaadf807f55ffc6c
+          name: 'Pi-Hole - DNS Query''s Forwarded'
+          type: DEPENDENT
+          key: queries_forwarded
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.queries_forwarded
+            -
+              type: JAVASCRIPT
+              parameters:
+                - |
+                  value = value.replace(",", "");  
+                  return parseInt(value);
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+        -
+          uuid: 56b6603dc88041959b378402ec54bde8
+          name: 'Pi-Hole - Reply - BLOB'
+          type: DEPENDENT
+          key: reply_BLOB
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.reply_BLOB
+            -
+              type: JAVASCRIPT
+              parameters:
+                - |
+                  value = value.replace(",", "");  
+                  return value;
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+        -
+          uuid: 972f20d546c0483181c3cc0d741f394f
+          name: 'Pi-Hole - Reply - DNSSEC'
+          type: DEPENDENT
+          key: reply_DNSSEC
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.reply_DNSSEC
+            -
+              type: JAVASCRIPT
+              parameters:
+                - |
+                  value = value.replace(",", "");  
+                  return value;
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+        -
+          uuid: 0cbb94443bb64abe880a74930f47ae37
+          name: 'Pi-Hole - Reply - Domain'
+          type: DEPENDENT
+          key: reply_DOMAIN
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.reply_DOMAIN
+            -
+              type: JAVASCRIPT
+              parameters:
+                - |
+                  value = value.replace(",", "");  
+                  return value;
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+        -
+          uuid: 3416e91f000342c68fb9f599e7da3e50
+          name: 'Pi-Hole - Reply - IP'
+          type: DEPENDENT
+          key: reply_IP
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.reply_IP
+            -
+              type: JAVASCRIPT
+              parameters:
+                - |
+                  value = value.replace(",", "");  
+                  return value;
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+        -
+          uuid: 51a1b36d55774934ad2c10772af9155c
+          name: 'Pi-Hole - Reply - NODATA'
+          type: DEPENDENT
+          key: reply_NODATA
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.reply_NODATA
+            -
+              type: JAVASCRIPT
+              parameters:
+                - |
+                  value = value.replace(",", "");  
+                  return value;
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+        -
+          uuid: b691418299214ed49722e37fc3890818
+          name: 'Pi-Hole - Reply - None'
+          type: DEPENDENT
+          key: reply_NONE
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.reply_NONE
+            -
+              type: JAVASCRIPT
+              parameters:
+                - |
+                  value = value.replace(",", "");  
+                  return value;
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+        -
+          uuid: 825daa2e640d4862957e00e2221b21be
+          name: 'Pi-Hole - Reply - NXDOMAIN'
+          type: DEPENDENT
+          key: reply_NXDOMAIN
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.reply_NXDOMAIN
+            -
+              type: JAVASCRIPT
+              parameters:
+                - |
+                  value = value.replace(",", "");  
+                  return value;
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+        -
+          uuid: 4d5b81658e1343ea96350cf6d3cfb114
+          name: 'Pi-Hole - Reply - REFUSED'
+          type: DEPENDENT
+          key: reply_REFUSED
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.reply_REFUSED
+            -
+              type: JAVASCRIPT
+              parameters:
+                - |
+                  value = value.replace(",", "");  
+                  return value;
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+        -
+          uuid: b924919d34b6422f850091ffe2587c7a
+          name: 'Pi-Hole - Reply - RRname'
+          type: DEPENDENT
+          key: reply_RRNAME
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.reply_RRNAME
+            -
+              type: JAVASCRIPT
+              parameters:
+                - |
+                  value = value.replace(",", "");  
+                  return value;
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+        -
+          uuid: 43c12750579347ee9a6ab98c1ee29588
+          name: 'Pi-Hole - Reply - SERVFAIL'
+          type: DEPENDENT
+          key: reply_SERVFAIL
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.reply_SERVFAIL
+            -
+              type: JAVASCRIPT
+              parameters:
+                - |
+                  value = value.replace(",", "");  
+                  return value;
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+        -
+          uuid: d4251b5d09a048698257f29529e7ae08
+          name: 'Pi-Hole - Reply - Unknown'
+          type: DEPENDENT
+          key: reply_UNKNOWN
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.reply_UNKNOWN
+            -
+              type: JAVASCRIPT
+              parameters:
+                - |
+                  value = value.replace(",", "");  
+                  return value;
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+        -
+          uuid: 1acbbe06ee2640f88b334dd2fde01f5a
+          name: 'Pi-Hole - Unique Domains'
+          type: DEPENDENT
+          key: unique_domains
+          delay: '0'
+          preprocessing:
+            -
+              type: JSONPATH
+              parameters:
+                - $.unique_domains
+            -
+              type: JAVASCRIPT
+              parameters:
+                - 'return parseInt(value);'
+          master_item:
+            key: pi-hole.sum
+          tags:
+            -
+              tag: Application
+              value: Pi-hole
+      tags:
+        -
+          tag: Application
+          value: Pi-hole
+      macros:
+        -
+          macro: '{$HOST}'
+        -
+          macro: '{$PORT}'
